@@ -91,6 +91,7 @@ description: 用于在 nil-design 仓库中设计、实现或刷新 @nild/compon
 - 复合组件使用 `Object.assign` 聚合公开子组件，保持与现有仓库一致的公开形态。
 - 类型优先集中在 `interfaces/index.d.ts` 中管理，公共 props、枚举、别名与 ref 类型尽量在这里声明。
 - 主组件实现中保持“结构职责”和“样式职责”分离：结构写在组件文件，视觉变体写在 `style/index.ts`。
+- 涉及焦点管理、键盘导航、active item、滚动定位或测量时，优先由拥有渲染权的父组件显式持有并传递所需的 DOM refs、可用索引集合与派生状态；hook 负责消费这些输入并封装行为，不通过 `querySelectorAll` 一类 DOM 查询反向收集内部节点。
 - 当把 DOM ref 的 `.current` 单独赋给本地变量时，本地变量名统一以 `$` 开头，例如 `const $listbox = listboxRef.current`，以便快速识别它是 DOM 节点快照而不是普通数据。
 
 关于内部节点扩展，默认遵循下面这条强约束：
@@ -119,6 +120,7 @@ description: 用于在 nil-design 仓库中设计、实现或刷新 @nild/compon
 - 复合组件的公开导出默认回到 `index.ts`，由 `Object.assign` 聚合子组件，避免每个组件自造导出形态。
 - 槽位解析优先复用 `registerSlots`；只在现有槽位模型明确不适用时，才新增自定义收集逻辑。
 - 父组件负责状态与运行时交互装配；context 默认只承载被动共享状态，不承载选择、激活、关闭这类动作方法。
+- 对外副作用回调，例如 `onChange`、`onOpenChange`、`onSelect`，不要放进 state updater / dispatcher 的回调体内；应先在组件层求出 `nextState`，再通过统一更新出口处理外部回调与内部状态写入。
 - 不把带下划线、内部感过强的 props 暴露到公开子组件；若父组件需要注入运行时状态，优先使用可读、语义明确的直接 props 或 handlers。
 - 渲染结果必须直接依赖当前同步状态或 memo 派生值；不要把 `useEffectCallback` 这类稳定回调用于 render 期状态判断。
 - 文档章节按用户感知组织；`变体`、`尺寸`、`状态` 等独立成节，不把不同维度强行并在一个首节里。
@@ -157,6 +159,7 @@ description: 用于在 nil-design 仓库中设计、实现或刷新 @nild/compon
   - `@nild/shared`
   - `@nild/icons`
   - `@nild/icons/Layers`
+- 示例中的尺寸、间距和宽度优先使用 Tailwind 预设刻度表达，例如 `w-56`、`gap-4`、`px-3`；只有当现有刻度确实无法表达设计意图时，才使用任意值类，不默认使用 `style={{}}` 或 `w-[220px]` 一类写法。
 - 如果组件支持内部节点扩展，示例必须展示插槽式扩展写法，不展示通过 prop 注入节点的写法。
 - 如果示例会把内容渲染到 portal 或浮层容器中，优先参考 `modal` 文档做法，必要时在 portal 根节点或表面节点上加 `className="vp-raw"`，避免 VitePress 文档样式污染。
 - 页面结尾固定追加：
