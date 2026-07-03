@@ -145,6 +145,22 @@ describe('Transition', () => {
         expect(screen.getByTestId('target')).toHaveTextContent(TransitionStatus.ENTERED);
     });
 
+    it('cancels pending delayed status updates on unmount', () => {
+        vi.useFakeTimers();
+
+        const renderStatus = (status: TransitionStatus) => <div data-testid="target">{status}</div>;
+        const { rerender, unmount } = render(<Transition visible={false}>{renderStatus}</Transition>);
+
+        rerender(<Transition visible>{renderStatus}</Transition>);
+
+        expect(screen.getByTestId('target')).toHaveTextContent(TransitionStatus.ENTERING);
+        expect(vi.getTimerCount()).toBe(1);
+
+        unmount();
+
+        expect(vi.getTimerCount()).toBe(0);
+    });
+
     it('preserves the child transition handler while still unmounting after removal', async () => {
         vi.useFakeTimers();
 

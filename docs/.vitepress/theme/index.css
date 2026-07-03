@@ -2,6 +2,7 @@
 @import '@nild/components/tailwindcss';
 
 @source '../../../node_modules/@nild/components/dist';
+@source '../../../packages/components/dist';
 
 @keyframes clip-ltr {
   0% {
