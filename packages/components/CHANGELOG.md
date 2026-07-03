@@ -1,5 +1,12 @@
 # @nild/components
 
+## 0.0.62
+
+### Patch Changes
+
+- f93a855: fix: cancel pending Transition status updates on unmount
+- a48dc96: refactor: optimize Modal internals and focus behavior
+
 ## 0.0.61
 
 ### Patch Changes
