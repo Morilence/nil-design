@@ -9,6 +9,7 @@ import {
     useRef,
     TransitionEvent,
     FC,
+    useCallback,
 } from 'react';
 import { mergeHandlers } from '../_shared/utils';
 import { TransitionStatus, TransitionProps } from './interfaces';
@@ -36,15 +37,21 @@ const Transition: FC<TransitionProps> = ({ className, children, visible = true }
             : TransitionStatus.EXITED
         : TransitionStatus.UNMOUNTED;
     const updateCallbackRef = useRef<{ (): void; cancel(): void }>();
+    const updateTimeoutRef = useRef<ReturnType<typeof setTimeout>>();
     const cachedChildRef = useRef(child);
 
     // This ref is completely dependent on the props and state of the component, so its execution is idempotent
     cachedChildRef.current = status === TransitionStatus.UNMOUNTED ? child : (child ?? cachedChildRef.current);
 
-    const cancelUpdateCallback = () => {
+    const cancelUpdateCallback = useCallback(() => {
         updateCallbackRef.current?.cancel();
         updateCallbackRef.current = undefined;
-    };
+
+        if (updateTimeoutRef.current !== undefined) {
+            clearTimeout(updateTimeoutRef.current);
+            updateTimeoutRef.current = undefined;
+        }
+    }, []);
 
     const setUpdateCallback = (callback: () => void) => {
         cancelUpdateCallback();
@@ -56,6 +63,7 @@ const Transition: FC<TransitionProps> = ({ className, children, visible = true }
 
             active = false;
             updateCallbackRef.current = undefined;
+            updateTimeoutRef.current = undefined;
             callback();
         };
 
@@ -72,8 +80,9 @@ const Transition: FC<TransitionProps> = ({ className, children, visible = true }
             setUpdateCallback(() => {
                 setStatus(completedStatus);
             });
+
             if (updateCallbackRef.current) {
-                setTimeout(updateCallbackRef.current, 0);
+                updateTimeoutRef.current = setTimeout(updateCallbackRef.current, 0);
             }
         });
     };
@@ -92,9 +101,10 @@ const Transition: FC<TransitionProps> = ({ className, children, visible = true }
     useEffect(() => {
         if (updateCallbackRef.current) {
             updateCallbackRef.current();
-            updateCallbackRef.current = undefined;
         }
     }, [status]);
+
+    useEffect(() => cancelUpdateCallback, [cancelUpdateCallback]);
 
     useEffect(() => {
         if (targetStatus === TransitionStatus.ENTERED) {
@@ -115,7 +125,7 @@ const Transition: FC<TransitionProps> = ({ className, children, visible = true }
             return;
         }
 
-        if (status !== TransitionStatus.EXITED && status !== TransitionStatus.UNMOUNTED) {
+        if (status === TransitionStatus.ENTERING || status === TransitionStatus.ENTERED) {
             scheduleStatus(TransitionStatus.EXITING, TransitionStatus.EXITED);
         }
         // eslint-disable-next-line react-hooks/exhaustive-deps

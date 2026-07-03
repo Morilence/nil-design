@@ -37,15 +37,6 @@ const overlay = cva([
 ]);
 
 const overlayMotion = cva<{ status: TransitionStatus }>([], {
-    variants: {
-        status: {
-            [TransitionStatus.UNMOUNTED]: '',
-            [TransitionStatus.ENTERING]: '',
-            [TransitionStatus.ENTERED]: '',
-            [TransitionStatus.EXITING]: '',
-            [TransitionStatus.EXITED]: '',
-        },
-    },
     compoundVariants: [
         {
             status: HIDDEN_STATUSES,
@@ -195,26 +186,6 @@ const surfaceMotion = cva<{
     variant: ModalVariant;
     placement: ModalPlacement;
 }>([], {
-    variants: {
-        status: {
-            [TransitionStatus.UNMOUNTED]: '',
-            [TransitionStatus.ENTERING]: '',
-            [TransitionStatus.ENTERED]: '',
-            [TransitionStatus.EXITING]: '',
-            [TransitionStatus.EXITED]: '',
-        },
-        variant: {
-            dialog: '',
-            drawer: '',
-        },
-        placement: {
-            center: '',
-            left: '',
-            right: '',
-            top: '',
-            bottom: '',
-        },
-    },
     compoundVariants: [
         {
             status: HIDDEN_STATUSES,

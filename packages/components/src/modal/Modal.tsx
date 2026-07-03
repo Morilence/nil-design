@@ -38,11 +38,12 @@ const Modal: FC<ModalProps> = props => {
         onOpen,
         onClose,
     } = props;
-    const { slots } = collectSlots(children);
+    const { slots } = useMemo(() => collectSlots(children), [children]);
     const [open, setOpen] = useControllableState(externalOpen, defaultOpen);
     const openRef = useRef(open);
     const triggerRef = useRef<Element>(null);
     const placement = resolvePlacement(variant, props.placement);
+    const portalEl = slots.portal.el;
 
     openRef.current = open;
 
@@ -108,30 +109,29 @@ const Modal: FC<ModalProps> = props => {
         ],
     );
 
+    const portalNode = portalEl && (
+        <Transition visible={open}>
+            {(status: TransitionStatus) => {
+                if (!open && (status === TransitionStatus.UNMOUNTED || status === TransitionStatus.EXITED)) {
+                    return null;
+                }
+
+                return cloneElement(portalEl, {
+                    ...portalEl.props,
+                    overlayClassName: cnJoin(variants.overlayMotion({ status }), portalEl.props.overlayClassName),
+                    surfaceClassName: cnJoin(
+                        variants.surfaceMotion({ status, variant, placement }),
+                        portalEl.props.surfaceClassName,
+                    ),
+                });
+            }}
+        </Transition>
+    );
+
     return (
         <ModalProvider value={context}>
             {slots.trigger.el ?? (slots.firstBare.el && <Trigger>{slots.firstBare.el}</Trigger>)}
-            {slots.portal.el && (
-                <Transition visible={open}>
-                    {(status: TransitionStatus) => {
-                        if (!open && [TransitionStatus.UNMOUNTED, TransitionStatus.EXITED].includes(status)) {
-                            return null;
-                        }
-
-                        return cloneElement(slots.portal.el!, {
-                            ...slots.portal.el!.props,
-                            overlayClassName: cnJoin(
-                                variants.overlayMotion({ status }),
-                                slots.portal.el!.props.overlayClassName,
-                            ),
-                            surfaceClassName: cnJoin(
-                                variants.surfaceMotion({ status, variant, placement }),
-                                slots.portal.el!.props.surfaceClassName,
-                            ),
-                        });
-                    }}
-                </Transition>
-            )}
+            {portalNode}
         </ModalProvider>
     );
 };

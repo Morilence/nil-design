@@ -39,8 +39,6 @@ const Close = forwardRef<HTMLButtonElement, CloseProps>(
                 equal={equal}
                 onClick={mergeHandlers(onClick, evt => {
                     updateOpen(false);
-
-                    return evt;
                 })}
                 ref={ref}
                 shape={shape}
