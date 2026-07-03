@@ -4,13 +4,11 @@ import { ReactElement, forwardRef, isValidElement, useMemo, useRef } from 'react
 import { createPortal } from 'react-dom';
 import { PortalContainerProvider } from '../_shared/contexts';
 import { getOwnerDocument, registerSlots } from '../_shared/utils';
-import { isBodyElement } from './Body';
 import Close, { isCloseElement } from './Close';
 import { useModalContext } from './contexts';
-import { isFooterElement } from './Footer';
-import { isHeaderElement } from './Header';
 import { useModalFocusScope, useModalStack } from './hooks';
 import { PortalProps } from './interfaces';
+import { isBodyElement, isFooterElement, isHeaderElement } from './Section';
 import variants from './style';
 
 export const isPortalElement = (child: unknown): child is ReactElement<PortalProps> => {
@@ -64,6 +62,7 @@ const Portal = forwardRef<HTMLDivElement, PortalProps>(
             }),
             [portalContainer],
         );
+        const { slots } = useMemo(() => collectSlots(children), [children]);
 
         const handleOverlayClick = useEffectCallback(() => {
             if (overlayless || !open || !closeOnOverlayClick || !topmost) {
@@ -101,8 +100,6 @@ const Portal = forwardRef<HTMLDivElement, PortalProps>(
         if (!container) {
             return null;
         }
-
-        const { slots } = collectSlots(children);
 
         return createPortal(
             <PortalContainerProvider value={portalContainerContext}>

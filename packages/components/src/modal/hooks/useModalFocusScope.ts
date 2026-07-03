@@ -42,6 +42,7 @@ const getFocusableElements = ($container: HTMLElement) => {
         return (
             !element.hasAttribute('disabled') &&
             element.getAttribute('aria-hidden') !== 'true' &&
+            element.getAttribute('aria-disabled') !== 'true' &&
             element.tabIndex >= 0 &&
             isElementVisible(element)
         );

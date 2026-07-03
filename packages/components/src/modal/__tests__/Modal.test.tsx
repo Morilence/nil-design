@@ -526,6 +526,51 @@ describe('Modal', () => {
         }
     });
 
+    it('skips aria-disabled elements when focusing and trapping tab navigation', async () => {
+        vi.useFakeTimers();
+
+        try {
+            render(
+                <Modal>
+                    <Modal.Trigger>
+                        <button type="button">Launch aria disabled modal</button>
+                    </Modal.Trigger>
+                    <Modal.Portal>
+                        <Modal.Body>
+                            <button aria-disabled="true" type="button">
+                                Unavailable action
+                            </button>
+                            <button type="button">Enabled action</button>
+                        </Modal.Body>
+                    </Modal.Portal>
+                </Modal>,
+            );
+
+            fireEvent.click(screen.getByRole('button', { name: 'Launch aria disabled modal' }));
+
+            act(() => {
+                vi.runAllTimers();
+            });
+
+            const unavailableAction = screen.getByRole('button', { name: 'Unavailable action' });
+            const enabledAction = screen.getByRole('button', { name: 'Enabled action' });
+            const closeButton = screen.getByRole('button', { name: 'Close' });
+
+            expect(enabledAction).toHaveFocus();
+            expect(unavailableAction).not.toHaveFocus();
+
+            enabledAction.focus();
+            fireEvent.keyDown(document, { key: 'Tab', shiftKey: true });
+            expect(closeButton).toHaveFocus();
+
+            closeButton.focus();
+            fireEvent.keyDown(document, { key: 'Tab' });
+            expect(enabledAction).toHaveFocus();
+        } finally {
+            vi.useRealTimers();
+        }
+    });
+
     it('focuses the dialog surface when no focusable descendants are available', async () => {
         vi.useFakeTimers();
 
