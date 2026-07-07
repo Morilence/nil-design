@@ -26,7 +26,13 @@ export default defineConfig(({ mode }) => {
             sourcemap: mode === 'DEV',
             minify: mode === 'PROD',
             rollupOptions: {
-                external: [...peerDeps, '@nild/icons/*', 'react/jsx-runtime'],
+                external: [
+                    ...peerDeps,
+                    // keep culori subpath imports external; peerDeps only contains the package root.
+                    /^culori(?:\/.*)?$/,
+                    '@nild/icons/*',
+                    'react/jsx-runtime',
+                ],
                 plugins: [minifyES(mode === 'PROD')],
                 output: {
                     format: 'es',
