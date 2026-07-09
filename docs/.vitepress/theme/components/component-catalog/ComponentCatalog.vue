@@ -51,6 +51,7 @@ import AlertIcon from '../../icons/components/alert.svg';
 import ButtonIcon from '../../icons/components/button.svg';
 import CheckboxIcon from '../../icons/components/checkbox.svg';
 import ColorPickerIcon from '../../icons/components/color-picker.svg';
+import DatePickerIcon from '../../icons/components/date-picker.svg';
 import DividerIcon from '../../icons/components/divider.svg';
 import FieldIcon from '../../icons/components/field.svg';
 import FormIcon from '../../icons/components/form.svg';
@@ -92,6 +93,7 @@ const iconMap = {
     form: markRaw(FormIcon),
     input: markRaw(InputIcon),
     'color-picker': markRaw(ColorPickerIcon),
+    'date-picker': markRaw(DatePickerIcon),
     radio: markRaw(RadioIcon),
     segment: markRaw(SegmentIcon),
     select: markRaw(SelectIcon),

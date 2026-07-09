@@ -2,6 +2,7 @@ import Alert from './alert';
 import Button from './button';
 import Checkbox from './checkbox';
 import ColorPicker from './color-picker';
+import DatePicker from './date-picker';
 import Divider from './divider';
 import Field from './field';
 import Form from './form';
@@ -21,11 +22,14 @@ import Typography from './typography';
 import Watermark from './watermark';
 import './tailwind.css';
 
+export type { DatePickerProps, DateRangePickerProps } from './date-picker';
+
 export {
     Alert,
     Button,
     Checkbox,
     ColorPicker,
+    DatePicker,
     Divider,
     Field,
     Form,

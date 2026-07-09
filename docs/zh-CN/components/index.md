@@ -13,6 +13,7 @@ const componentCards = [
     { slug: 'tabs', title: 'Tabs 标签页' },
     { slug: 'checkbox', title: 'Checkbox 复选框' },
     { slug: 'color-picker', title: 'ColorPicker 颜色选择器' },
+    { slug: 'date-picker', title: 'DatePicker 日期选择器' },
     { slug: 'field', title: 'Field 字段' },
     { slug: 'form', title: 'Form 表单' },
     { slug: 'input', title: 'Input 输入框' },

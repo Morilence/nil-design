@@ -35,9 +35,9 @@ const Trigger: FC<TriggerProps> = ({ children }) => {
     });
 
     useEventListener(global, 'click', evt => {
-        const target = evt.target as Node | null;
-        const inTrigger = refs.trigger.current?.contains(target);
-        const inPortal = refs.portal.current?.contains(target);
+        const path = evt.composedPath();
+        const inTrigger = !!refs.trigger.current && path.includes(refs.trigger.current);
+        const inPortal = !!refs.portal.current && path.includes(refs.portal.current);
 
         if (inTrigger) {
             actions.has('click') && setOpen(open => !open);
@@ -48,9 +48,9 @@ const Trigger: FC<TriggerProps> = ({ children }) => {
     });
 
     useEventListener(global, 'contextmenu', evt => {
-        const target = evt.target as Node | null;
-        const inTrigger = refs.trigger.current?.contains(target);
-        const inPortal = refs.portal.current?.contains(target);
+        const path = evt.composedPath();
+        const inTrigger = !!refs.trigger.current && path.includes(refs.trigger.current);
+        const inPortal = !!refs.portal.current && path.includes(refs.portal.current);
 
         if (inTrigger) {
             actions.has('contextMenu') && (evt.preventDefault(), setOpen(true));
