@@ -1,5 +1,6 @@
 import '@testing-library/jest-dom';
 import { fireEvent, render, screen, waitFor } from '@testing-library/react';
+import { useState } from 'react';
 import { renderToString } from 'react-dom/server';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import Popup from '..';
@@ -21,6 +22,18 @@ vi.mock('@floating-ui/dom', () => ({
     flip: vi.fn(() => ({ name: 'flip' })),
     arrow: vi.fn(() => ({ name: 'arrow' })),
 }));
+
+const RemovingPortalContent = () => {
+    const [visible, setVisible] = useState(true);
+
+    return visible ? (
+        <button onClick={() => setVisible(false)} type="button">
+            Remove target
+        </button>
+    ) : (
+        <span>Target removed</span>
+    );
+};
 
 describe('Popup', () => {
     beforeEach(() => {
@@ -155,6 +168,26 @@ describe('Popup', () => {
         fireEvent.click(screen.getByRole('button', { name: 'Open trigger' }));
 
         expect(onClose).toHaveBeenCalledTimes(1);
+    });
+
+    it('keeps open when an internal click removes its target', () => {
+        const onClose = vi.fn();
+
+        render(
+            <Popup defaultOpen onClose={onClose}>
+                <Popup.Trigger>
+                    <button type="button">Trigger</button>
+                </Popup.Trigger>
+                <Popup.Portal>
+                    <RemovingPortalContent />
+                </Popup.Portal>
+            </Popup>,
+        );
+
+        fireEvent.click(screen.getByRole('button', { name: 'Remove target' }));
+
+        expect(screen.getByText('Target removed')).toBeInTheDocument();
+        expect(onClose).not.toHaveBeenCalled();
     });
 
     it('does not call close for controlled closed popups', () => {
