@@ -1,5 +1,12 @@
 # @nild/components
 
+## 0.0.63
+
+### Patch Changes
+
+- ec509cf: feat: add DatePicker component
+- f904277: chore: move culori to peer dependencies
+
 ## 0.0.62
 
 ### Patch Changes
